@@ -11,9 +11,10 @@ import java.util.List;
 public class SubjectRepositoryLogicimpl implements Repository<Subject> {
     private List<Subject> subjects;
     TeacherRepositoryLogicimpl teacherLog = new TeacherRepositoryLogicimpl();
+    Teacher teacherb = teacherLog.getTeachers().get(0);
 
     public SubjectRepositoryLogicimpl(){
-        Subject s1 = new Subject(1L, "Maths", new Teacher(1L, "Gabriel", "Gabriel@mail.com"));
+        Subject s1 = new Subject(1L, "Maths", teacherb);
         Subject s2 = new Subject(1L, "Science", new Teacher(3L, "Franco", "Franco@mail.com"));
         Subject s3 = new Subject(1L, "English", new Teacher(2L, "Paco", "Paco@mail.com"));
         subjects = new ArrayList<>(List.of(s1,s2,s3));

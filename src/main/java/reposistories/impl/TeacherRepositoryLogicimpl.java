@@ -10,6 +10,11 @@ import java.util.List;
 public class TeacherRepositoryLogicimpl implements Repository<Teacher> {
 
     private List<Teacher> teachers;
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
     public TeacherRepositoryLogicimpl(){
         Teacher t1 = new Teacher(1L, "Gabriel", "Gabriel@mail.com");
         Teacher t2 = new Teacher(2L, "Paco", "Paco@mail.com");
