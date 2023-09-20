@@ -1,6 +1,9 @@
 package repository.impl;
 
 import domain.models.Student;
+import exceptions.UniversityException;
+import mapping.dtos.StudentDto;
+import mapping.mappers.StudentMapper;
 import repository.StudentRepository;
 import singledomain.ConexionDB;
 
@@ -9,75 +12,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentRepositoryimpl implements StudentRepository {
-    private Connection getConnection() throws SQLException {
-        return ConexionDB.getInstance();
-    }
-    private Student createStudent(ResultSet resultSet)throws SQLException{
-        Student student = new Student();
-        student.setId(resultSet.getLong("id"));
-        student.setName(resultSet.getString("name"));
-        student.setEmail(resultSet.getString("email"));
-        student.setSemester(resultSet.getString("semester"));
-        return student;
+    private List<Student> students;
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 
-    public List<Student> list(){
-        List<Student> studentList = new ArrayList<Student>();
-        try(Statement stat = getConnection().createStatement();
-            ResultSet rs = stat.executeQuery("SELECT * FROM student")){
-
-            while(rs.next()){
-
-                Student student = createStudent(rs);
-                studentList.add(student);
-
-            }
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return studentList;
+    public List<Student> getStudents() {
+        return students;
     }
-    public Student byId(Long id){
-        Student student = null;
-        try(PreparedStatement preparedStatement = getConnection()
-                .prepareStatement("SELECT * FROM student WHERE id =?")){
-            preparedStatement.setLong(1,id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()){
-                student = createStudent(resultSet);
-            }
-            resultSet.close();
-        }catch(SQLException e){
-            e.printStackTrace();
-        }return student;
+    public StudentRepositoryimpl(){
+        Student s1 = new Student(1L,"Monica", "Monica@mail.com", "2");
+        Student s2 = new Student(2L,"Pepe", "Pepe@mail.com", "5");;
+        Student s3 = new Student(3L,"Juan", "Juan@mail.com", "9");
+        students = new ArrayList<Student>();
+        students.add(s1);
+        students.add(s2);
+        students.add(s3);
+
     }
-    public void delete(int id){
-        try(PreparedStatement preparedStatement = getConnection()
-                .prepareStatement("DELETE FROM student WHERE id =?")) {
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException throwables){
-            throwables.printStackTrace();
-        }
+    @Override
+    public List<StudentDto> list() {
+        return StudentMapper.mapFrom(students);
     }
-    public void save(Student subject){
-        String sql;
-        if(subject.getId() != null && subject.getId()>0){
-            sql = "UPDATE student SET name=?, email=?, semester=? WHERE id=?";
-        }else{
-            sql = "INSERT INTO student (name, email, semester) VALUES (?,?,?);";
-        }
-        try(PreparedStatement stmt = getConnection().prepareStatement(sql)){
-            stmt.setString(1, subject.getName());
-            stmt.setString(2, subject.getEmail());
-            stmt.setString(3, subject.getSemester());
-            if(subject.getId() != null && subject.getId()>0){
-                stmt.setLong(4, subject.getId());
-            }
-            stmt.executeUpdate();
-        }catch (SQLException throwables){
-            throwables.printStackTrace();
-        }
+    @Override
+    public StudentDto byId(Long id) {
+        return list().stream()
+                .filter(student -> student.id().equals(id))
+                .findFirst()
+                .orElseThrow(()-> new UniversityException("Student not found"));
+    }
+    @Override
+    public void save(StudentDto student) {
+        list().add(student);
+    }
+
+    @Override
+    public void delete(Long id) {
+        list().remove(id);
     }
 }

@@ -12,22 +12,22 @@ public class SubjectServiceimpl implements SubjectService {
         this.repository = repository;
     }
     @Override
-    public List<Subject> listar() {
-        return repository.listar();
+    public List<Subject> list() {
+        return repository.list();
     }
 
     @Override
-    public Subject porId(Long id) {
-        return repository.porId(id);
+    public Subject byId(Long id) {
+        return repository.byId(id);
     }
 
     @Override
-    public void guardar(Subject t) {
-        repository.guardar(t);
+    public void save(Subject t) {
+        repository.save(t);
     }
 
     @Override
-    public void eliminar(Long id) {
-        repository.eliminar(id);
+    public void delete(Long id) {
+        repository.delete(id);
     }
 }

@@ -1,6 +1,5 @@
 package conntrollers;
 
-import domain.models.Student;
 import domain.models.Subject;
 import domain.models.Teacher;
 import jakarta.servlet.ServletException;
@@ -8,11 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import reposistories.impl.StudentRepositoryLogicImpl;
 import reposistories.impl.SubjectRepositoryLogicimpl;
-import services.StudentService;
 import services.SubjectService;
-import services.impl.StudentServiceimpl;
 import services.impl.SubjectServiceimpl;
 
 import java.io.IOException;
@@ -41,7 +37,7 @@ public class SubjectController extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<h1>Students</h1>");
-        out.println(service.listar());
+        out.println(service.list());
         out.println("</body></html>");
     }
 
@@ -51,8 +47,8 @@ public class SubjectController extends HttpServlet {
 
         String name = req.getParameter("name");
         Subject subject = new Subject(4L, name, new Teacher(5L,"Aja", "Aja@mail.com"));
-        service.guardar(subject);
-        System.out.println(service.listar());
+        service.save(subject);
+        System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {
 

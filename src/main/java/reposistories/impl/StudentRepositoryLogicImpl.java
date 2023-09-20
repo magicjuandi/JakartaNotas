@@ -2,6 +2,7 @@ package reposistories.impl;
 
 import domain.models.Student;
 import exceptions.UniversityException;
+import mapping.dtos.StudentDto;
 import reposistories.Repository;
 
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ public class StudentRepositoryLogicImpl implements Repository<Student> {
     }
 
     @Override
-    public List<Student> listar() {
+    public List<Student> list() {
         return students;
     }
 
     @Override
-    public Student porId(Long id) {
+    public Student byId(Long id) {
         return students.stream()
                 .filter(e->id.equals(e.getId()))
                 .findFirst()
@@ -31,12 +32,12 @@ public class StudentRepositoryLogicImpl implements Repository<Student> {
     }
 
     @Override
-    public void guardar(Student student) {
+    public void save(Student student) {
         students.add(student);
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void delete(Long id) {
         students.removeIf(e->e.getId().equals(id));
     }
 }

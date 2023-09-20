@@ -1,16 +1,15 @@
 package services;
 
-import domain.models.Student;
 import domain.models.Teacher;
 
 import java.util.List;
 
 public interface TeacherService {
-    List<Teacher> listar();
+    List<Teacher> list();
 
-    Teacher porId(Long id);
+    Teacher byId(Long id);
 
-    void guardar(Teacher t);
+    void save(Teacher t);
 
-    void eliminar(Long id);
+    void delete(Long id);
 }

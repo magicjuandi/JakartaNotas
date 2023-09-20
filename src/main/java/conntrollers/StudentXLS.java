@@ -6,9 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import mapping.dtos.StudentDto;
 import reposistories.impl.StudentRepositoryLogicImpl;
-import repository.impl.StudentRepositoryimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +17,7 @@ public class StudentXLS extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException {
         StudentRepositoryLogicImpl service = new StudentRepositoryLogicImpl();
-        List<Student> students = service.listar();
+        List<Student> students = service.list();
         resp.setContentType("text/html;charset=UTF-8");
         String servletPath = req.getServletPath();
         boolean esXls = servletPath.endsWith(".xls");

@@ -44,7 +44,7 @@ public class StudentJson extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         StudentRepositoryLogicImpl service = new StudentRepositoryLogicImpl();
-        List<Student> students = service.listar();
+        List<Student> students = service.list();
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(students);
         resp.setContentType("application/json");

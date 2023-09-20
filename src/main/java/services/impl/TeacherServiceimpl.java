@@ -1,6 +1,5 @@
 package services.impl;
 
-import domain.models.Student;
 import domain.models.Teacher;
 import reposistories.impl.TeacherRepositoryLogicimpl;
 import services.TeacherService;
@@ -14,22 +13,22 @@ public class TeacherServiceimpl implements TeacherService {
         this.repository = repository;
     }
     @Override
-    public List<Teacher> listar() {
-        return repository.listar();
+    public List<Teacher> list() {
+        return repository.list();
     }
 
     @Override
-    public Teacher porId(Long id) {
-        return repository.porId(id);
+    public Teacher byId(Long id) {
+        return repository.byId(id);
     }
 
     @Override
-    public void guardar(Teacher t) {
-        repository.guardar(t);
+    public void save(Teacher t) {
+        repository.save(t);
     }
 
     @Override
-    public void eliminar(Long id) {
-        repository.eliminar(id);
+    public void delete(Long id) {
+        repository.delete(id);
     }
 }

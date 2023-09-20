@@ -22,12 +22,12 @@ public class TeacherRepositoryLogicimpl implements Repository<Teacher> {
         teachers = new ArrayList<>(List.of(t1,t2,t3));
     }
     @Override
-    public List<Teacher> listar() {
+    public List<Teacher> list() {
         return teachers;
     }
 
     @Override
-    public Teacher porId(Long id) {
+    public Teacher byId(Long id) {
         return teachers.stream()
                 .filter(e->id.equals(e.getId()))
                 .findFirst()
@@ -35,13 +35,13 @@ public class TeacherRepositoryLogicimpl implements Repository<Teacher> {
     }
 
     @Override
-    public void guardar(Teacher teacher) {
+    public void save(Teacher teacher) {
         teachers.add(teacher);
 
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void delete(Long id) {
         teachers.removeIf(e->e.getId().equals(id));
     }
 }

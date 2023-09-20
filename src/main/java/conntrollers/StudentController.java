@@ -6,7 +6,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.mappers.StudentMapper;
 import reposistories.impl.StudentRepositoryLogicImpl;
+import repository.impl.StudentRepositoryimpl;
 import services.StudentService;
 import services.impl.StudentServiceimpl;
 
@@ -16,12 +18,13 @@ import java.io.PrintWriter;
 @WebServlet(name = "studentController", value = "/student-form")
 public class StudentController extends HttpServlet {
 
-    private StudentRepositoryLogicImpl studentRepository;
+    private StudentRepositoryimpl studentRepository;
+    private StudentMapper mapper;
     private StudentService service;
 
     public StudentController() {
-        studentRepository = new StudentRepositoryLogicImpl();
-        service = new StudentServiceimpl(studentRepository);
+        studentRepository = new StudentRepositoryimpl();
+        service = new StudentServiceimpl(studentRepository, mapper);
     }
 
     private String message;
@@ -37,7 +40,7 @@ public class StudentController extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<h1>Students</h1>");
-        out.println(service.listar());
+        out.println(service.list());
         out.println("</body></html>");
     }
 
@@ -49,8 +52,8 @@ public class StudentController extends HttpServlet {
         String email = req.getParameter("email");
         String semester = req.getParameter("semester");
         Student student = new Student(4L, name, email, semester);
-        service.guardar(student);
-        System.out.println(service.listar());
+        service.save(student);
+        System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {
 

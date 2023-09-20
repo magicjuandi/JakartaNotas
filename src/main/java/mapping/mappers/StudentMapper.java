@@ -23,4 +23,8 @@ public class StudentMapper {
     public static List<StudentDto> mapFrom(List<Student> source){
         return source.stream().map(StudentMapper::mapFrom).collect(Collectors.toList());
     }
+    public static List<Student> mapFromDto(List<StudentDto> source){
+        return source.stream().map(StudentMapper::mapFrom).collect(Collectors.toList());
+    }
+
 }

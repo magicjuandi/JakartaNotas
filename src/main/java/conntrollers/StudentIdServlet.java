@@ -7,21 +7,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.mappers.StudentMapper;
 import reposistories.impl.StudentRepositoryLogicImpl;
+import repository.impl.StudentRepositoryimpl;
 import services.StudentService;
 import services.impl.StudentServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 @WebServlet("/studentId")
 public class StudentIdServlet extends HttpServlet {
-    private StudentRepositoryLogicImpl repository;
+    private StudentRepositoryimpl repository;
     private StudentService service;
+    private StudentMapper mapper;
     public StudentIdServlet(){
-        repository = new StudentRepositoryLogicImpl();
-        service = new StudentServiceimpl(repository);
+        repository = new StudentRepositoryimpl();
+        service = new StudentServiceimpl(repository,mapper);
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
@@ -30,7 +32,7 @@ public class StudentIdServlet extends HttpServlet {
         Long id = Long.valueOf(req.getParameter("id"));
 
         try{
-            Student student= repository.porId(id);
+            Student student= service.byId(id);
             try (PrintWriter out = resp.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");

@@ -21,12 +21,12 @@ public class SubjectRepositoryLogicimpl implements Repository<Subject> {
     }
 
     @Override
-    public List<Subject> listar() {
+    public List<Subject> list() {
         return subjects;
     }
 
     @Override
-    public Subject porId(Long id) {
+    public Subject byId(Long id) {
         return subjects.stream()
                 .filter(e->id.equals(e.getId()))
                 .findFirst()
@@ -34,12 +34,12 @@ public class SubjectRepositoryLogicimpl implements Repository<Subject> {
     }
 
     @Override
-    public void guardar(Subject subject) {
+    public void save(Subject subject) {
         subjects.add(subject);
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void delete(Long id) {
         subjects.removeIf(e->e.getId().equals(id));
     }
 }
