@@ -6,11 +6,11 @@ import mapping.dtos.StudentDto;
 import java.util.List;
 
 public interface StudentService {
-    List<Student> list();
+    List<StudentDto> list();
 
-    Student byId(Long id);
+    StudentDto byId(Long id);
 
-    void save(Student t);
+    void save(StudentDto t);
 
     void delete(Long id);
 }

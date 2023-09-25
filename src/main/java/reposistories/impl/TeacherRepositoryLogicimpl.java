@@ -2,7 +2,7 @@ package reposistories.impl;
 
 import domain.models.Teacher;
 import exceptions.UniversityException;
-import reposistories.Repository;
+import repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;

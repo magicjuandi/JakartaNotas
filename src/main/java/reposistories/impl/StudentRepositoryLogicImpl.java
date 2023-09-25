@@ -3,12 +3,13 @@ package reposistories.impl;
 import domain.models.Student;
 import exceptions.UniversityException;
 import mapping.dtos.StudentDto;
-import reposistories.Repository;
+import mapping.mappers.StudentMapper;
+import repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentRepositoryLogicImpl implements Repository<Student> {
+public class StudentRepositoryLogicImpl implements Repository<StudentDto> {
     private List<Student> students;
 
     public StudentRepositoryLogicImpl() {
@@ -19,25 +20,25 @@ public class StudentRepositoryLogicImpl implements Repository<Student> {
     }
 
     @Override
-    public List<Student> list() {
-        return students;
+    public List<StudentDto> list() {
+        return StudentMapper.mapFrom(students);
     }
 
     @Override
-    public Student byId(Long id) {
-        return students.stream()
-                .filter(e->id.equals(e.getId()))
+    public StudentDto byId(Long id) {
+        return list().stream()
+                .filter(student -> student.id().equals(id))
                 .findFirst()
                 .orElseThrow(()-> new UniversityException("Student not found"));
     }
 
     @Override
-    public void save(Student student) {
-        students.add(student);
+    public void save(StudentDto student) {
+        list().add(student);
     }
 
     @Override
     public void delete(Long id) {
-        students.removeIf(e->e.getId().equals(id));
+        list().remove(id);
     }
 }

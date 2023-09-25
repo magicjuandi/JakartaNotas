@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
 import reposistories.impl.StudentRepositoryLogicImpl;
 import repository.impl.StudentRepositoryimpl;
@@ -15,15 +16,17 @@ import services.impl.StudentServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 
 @WebServlet("/studentId")
 public class StudentIdServlet extends HttpServlet {
     private StudentRepositoryimpl repository;
     private StudentService service;
     private StudentMapper mapper;
+    private Connection conn;
     public StudentIdServlet(){
-        repository = new StudentRepositoryimpl();
-        service = new StudentServiceimpl(repository,mapper);
+        repository = new StudentRepositoryimpl(conn);
+        service = new StudentServiceimpl(conn);
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
@@ -32,7 +35,8 @@ public class StudentIdServlet extends HttpServlet {
         Long id = Long.valueOf(req.getParameter("id"));
 
         try{
-            Student student= service.byId(id);
+            StudentDto student= service.byId(id);
+            Student studentA = StudentMapper.mapFrom(student);
             try (PrintWriter out = resp.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
@@ -42,7 +46,7 @@ public class StudentIdServlet extends HttpServlet {
                 out.println(" </head>");
                 out.println(" <body>");
                 out.println(" <h1>Login correcto!</h1>");
-                out.println(" <h3>Hola "+ student.getName() + " has iniciado sesión con éxito!</h3>");
+                out.println(" <h3>Hola "+  studentA.getName() + " has iniciado sesión con éxito!</h3>");
                 out.println(" </body>");
                 out.println("</html>");
             }

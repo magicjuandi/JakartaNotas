@@ -1,4 +1,4 @@
-package com.example.jakartanotas;
+package conntrollers;
 
 import java.io.*;
 
@@ -23,6 +23,4 @@ public class HelloServlet extends HttpServlet {
         out.println("</body></html>");
     }
 
-    public void destroy() {
-    }
 }

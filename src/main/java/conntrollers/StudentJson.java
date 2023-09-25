@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.StudentDto;
 import reposistories.impl.StudentRepositoryLogicImpl;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class StudentJson extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         StudentRepositoryLogicImpl service = new StudentRepositoryLogicImpl();
-        List<Student> students = service.list();
+        List<StudentDto> students = service.list();
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(students);
         resp.setContentType("application/json");

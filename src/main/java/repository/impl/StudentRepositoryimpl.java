@@ -1,9 +1,11 @@
 package repository.impl;
 
 import domain.models.Student;
+import exceptions.ServiceJdbcException;
 import exceptions.UniversityException;
 import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
+import repository.Repository;
 import repository.StudentRepository;
 import singledomain.ConexionDB;
 
@@ -11,44 +13,78 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentRepositoryimpl implements StudentRepository {
-    private List<Student> students;
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
+public class StudentRepositoryimpl implements Repository<StudentDto> {
+    private Connection conn;
+    public StudentRepositoryimpl(Connection conn) {
+        this.conn = conn;
     }
 
-    public List<Student> getStudents() {
-        return students;
-    }
-    public StudentRepositoryimpl(){
-        Student s1 = new Student(1L,"Monica", "Monica@mail.com", "2");
-        Student s2 = new Student(2L,"Pepe", "Pepe@mail.com", "5");;
-        Student s3 = new Student(3L,"Juan", "Juan@mail.com", "9");
-        students = new ArrayList<Student>();
-        students.add(s1);
-        students.add(s2);
-        students.add(s3);
-
-    }
-    @Override
-    public List<StudentDto> list() {
-        return StudentMapper.mapFrom(students);
-    }
-    @Override
-    public StudentDto byId(Long id) {
-        return list().stream()
-                .filter(student -> student.id().equals(id))
-                .findFirst()
-                .orElseThrow(()-> new UniversityException("Student not found"));
-    }
-    @Override
-    public void save(StudentDto student) {
-        list().add(student);
+    private StudentDto createStudent(ResultSet resultSet)throws SQLException{
+        Student student = new Student();
+        student.setId(resultSet.getLong("id"));
+        student.setName(resultSet.getString("name"));
+        student.setEmail(resultSet.getString("email"));
+        student.setSemester(resultSet.getString("semester"));
+        return StudentMapper.mapFrom(student);
     }
 
-    @Override
-    public void delete(Long id) {
-        list().remove(id);
+    public List<StudentDto> list() throws ServiceJdbcException {
+        List<StudentDto> studentList = new ArrayList<StudentDto>();
+        try(Statement stat = conn.createStatement();
+            ResultSet rs = stat.executeQuery("SELECT * FROM student")){
+
+            while(rs.next()){
+
+                StudentDto student = createStudent(rs);
+                studentList.add(student);
+
+            }
+
+        } catch (SQLException e){
+            throw new ServiceJdbcException(e.getMessage(), e.getCause());
+        }
+        return studentList;
+    }
+    public StudentDto byId(Long id){
+        StudentDto student = null;
+        try(PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM student WHERE id =?")){
+            preparedStatement.setLong(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                student = createStudent(resultSet);
+            }
+            resultSet.close();
+        }catch(SQLException e){
+            throw new ServiceJdbcException(e.getMessage(), e.getCause());
+        }return student;
+    }
+    public void delete(Long id){
+        try(PreparedStatement preparedStatement = conn
+                .prepareStatement("DELETE FROM student WHERE id =?")) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException throwables){
+            throwables.printStackTrace();
+        }
+    }
+    public void save(StudentDto studentDto){
+        String sql;
+        Student student = StudentMapper.mapFrom(studentDto);
+        if(student.getId() != null && student.getId()>0){
+            sql = "UPDATE student SET name=?, email=?, semester=? WHERE id=?";
+        }else{
+            sql = "INSERT INTO student (name, email, semester) VALUES (?,?,?);";
+        }
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, student.getName());
+            stmt.setString(2, student.getEmail());
+            stmt.setString(3, student.getSemester());
+            if(student.getId() != null && student.getId()>0){
+                stmt.setLong(4, student.getId());
+            }
+            stmt.executeUpdate();
+        }catch (SQLException throwables){
+            throw new ServiceJdbcException(throwables.getMessage(), throwables.getCause());
+        }
     }
 }

@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
 import reposistories.impl.StudentRepositoryLogicImpl;
 import repository.impl.StudentRepositoryimpl;
@@ -14,6 +15,7 @@ import services.impl.StudentServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 
 @WebServlet(name = "studentController", value = "/student-form")
 public class StudentController extends HttpServlet {
@@ -23,8 +25,7 @@ public class StudentController extends HttpServlet {
     private StudentService service;
 
     public StudentController() {
-        studentRepository = new StudentRepositoryimpl();
-        service = new StudentServiceimpl(studentRepository, mapper);
+
     }
 
     private String message;
@@ -35,6 +36,9 @@ public class StudentController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
+        Connection conn = (Connection) request.getAttribute("conn");
+        studentRepository = new StudentRepositoryimpl(conn);
+        service = new StudentServiceimpl(conn);
 
         // Hello
         PrintWriter out = response.getWriter();
@@ -47,12 +51,15 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-
+        Connection conn = (Connection) req.getAttribute("conn");
+        studentRepository = new StudentRepositoryimpl(conn);
+        service = new StudentServiceimpl(conn);
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String semester = req.getParameter("semester");
         Student student = new Student(4L, name, email, semester);
-        service.save(student);
+        StudentDto studentA = StudentMapper.mapFrom(student);
+        service.save(studentA);
         System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {

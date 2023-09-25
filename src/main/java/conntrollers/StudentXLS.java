@@ -6,6 +6,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.StudentDto;
+import mapping.mappers.StudentMapper;
 import reposistories.impl.StudentRepositoryLogicImpl;
 
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class StudentXLS extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException {
         StudentRepositoryLogicImpl service = new StudentRepositoryLogicImpl();
-        List<Student> students = service.list();
+        List<StudentDto> students = service.list();
         resp.setContentType("text/html;charset=UTF-8");
         String servletPath = req.getServletPath();
         boolean esXls = servletPath.endsWith(".xls");
@@ -44,7 +46,8 @@ public class StudentXLS extends HttpServlet {
             out.println("<th>correo</th>");
             out.println("<th>semestre</th>");
             out.println("</tr>");
-            students.forEach(p ->{
+            List<Student> studentsA = StudentMapper.mapFromDto(students);
+            studentsA.forEach(p ->{
                 out.println("<tr>");
                 out.println("<td>" + p.getId() + "</td>");
                 out.println("<td>" + p.getName() + "</td>");

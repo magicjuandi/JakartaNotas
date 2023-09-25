@@ -9,7 +9,8 @@ public class ConexionDB {
     private static String user = "root";
     private static String password = "";
     private static Connection connection;
-    public static Connection getInstance() throws SQLException {
+    public static Connection getInstance() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
         if(connection == null){
             connection = DriverManager.getConnection(url,user,password);
         }
