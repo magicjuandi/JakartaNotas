@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.teacher;
 
 import domain.models.Teacher;
 import jakarta.servlet.ServletException;
@@ -6,23 +6,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.TeacherDto;
+import mapping.mappers.TeacherMapper;
 import reposistories.impl.TeacherRepositoryLogicimpl;
+import repository.impl.StudentRepositoryimpl;
+import repository.impl.TeacherRepositoryimpl;
 import services.TeacherService;
+import services.impl.StudentServiceimpl;
 import services.impl.TeacherServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 
 @WebServlet(name = "teacherController", value = "/teacher-form")
 public class TeacherController extends HttpServlet {
-    private TeacherRepositoryLogicimpl teacherRepository;
+    private TeacherRepositoryimpl teacherRepository;
     private TeacherService service;
-
-    public TeacherController() {
-        teacherRepository = new TeacherRepositoryLogicimpl();
-        service = new TeacherServiceimpl(teacherRepository);
-    }
-
     private String message;
 
     public void init() {
@@ -31,8 +31,10 @@ public class TeacherController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
+        Connection conn = (Connection) request.getAttribute("conn");
+        teacherRepository = new TeacherRepositoryimpl(conn);
+        service = new TeacherServiceimpl(conn);
 
-        // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<h1>Teachers</h1>");
@@ -43,11 +45,16 @@ public class TeacherController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-
+        Connection conn = (Connection) req.getAttribute("conn");
+        teacherRepository = new TeacherRepositoryimpl(conn);
+        service = new TeacherServiceimpl(conn);
         String name = req.getParameter("name");
         String email = req.getParameter("email");
-        Teacher teacher = new Teacher(4L, name, email);
-        service.save(teacher);
+        Teacher teacher = Teacher.builder()
+                        .name(name)
+                        .email(email).build();
+        TeacherDto teacherDto = TeacherMapper.mapFrom(teacher);
+        service.save(teacherDto);
         System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {

@@ -1,33 +1,37 @@
 package services.impl;
 
 import domain.models.Subject;
+import mapping.dtos.SubjectDto;
 import reposistories.impl.SubjectRepositoryLogicimpl;
+import repository.Repository;
+import repository.impl.SubjectRepositoryimpl;
 import services.SubjectService;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class SubjectServiceimpl implements SubjectService {
-    private final SubjectRepositoryLogicimpl repository;
-    public SubjectServiceimpl(SubjectRepositoryLogicimpl repository){
-        this.repository = repository;
+    private final Repository<SubjectDto> subjectRepository;
+    public SubjectServiceimpl(Connection connection){
+        this.subjectRepository = new SubjectRepositoryimpl(connection);
     }
     @Override
-    public List<Subject> list() {
-        return repository.list();
-    }
-
-    @Override
-    public Subject byId(Long id) {
-        return repository.byId(id);
+    public List<SubjectDto> list() {
+        return subjectRepository.list();
     }
 
     @Override
-    public void save(Subject t) {
-        repository.save(t);
+    public SubjectDto byId(Long id) {
+        return subjectRepository.byId(id);
+    }
+
+    @Override
+    public void save(SubjectDto t) {
+        subjectRepository.save(t);
     }
 
     @Override
     public void delete(Long id) {
-        repository.delete(id);
+        subjectRepository.delete(id);
     }
 }

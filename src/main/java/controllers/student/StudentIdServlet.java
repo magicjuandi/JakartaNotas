@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.student;
 
 import domain.models.Student;
 import exceptions.UniversityException;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
-import reposistories.impl.StudentRepositoryLogicImpl;
 import repository.impl.StudentRepositoryimpl;
 import services.StudentService;
 import services.impl.StudentServiceimpl;

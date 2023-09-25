@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.login;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -40,7 +40,8 @@ public class LoginServlet extends HttpServlet {
                 out.println("</html>");
             }
         } else {
-            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Lo sentimos no esta autorizado para ingresar a esta página!");
+            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Lo sentimos no " +
+                    "esta autorizado para ingresar a esta página!");
         }
     }
 

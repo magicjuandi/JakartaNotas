@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.student;
 
 import domain.models.Student;
 import jakarta.servlet.ServletException;
@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
-import reposistories.impl.StudentRepositoryLogicImpl;
 import repository.impl.StudentRepositoryimpl;
 import services.StudentService;
 import services.impl.StudentServiceimpl;
@@ -21,13 +20,7 @@ import java.sql.Connection;
 public class StudentController extends HttpServlet {
 
     private StudentRepositoryimpl studentRepository;
-    private StudentMapper mapper;
     private StudentService service;
-
-    public StudentController() {
-
-    }
-
     private String message;
 
     public void init() {
@@ -57,9 +50,12 @@ public class StudentController extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String semester = req.getParameter("semester");
-        Student student = new Student(4L, name, email, semester);
-        StudentDto studentA = StudentMapper.mapFrom(student);
-        service.save(studentA);
+        Student student = Student.builder()
+                .name(name)
+                .email(email)
+                .semester(semester).build();
+        StudentDto studentDto = StudentMapper.mapFrom(student);
+        service.save(studentDto);
         System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {

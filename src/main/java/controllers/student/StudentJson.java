@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.student;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.Student;

@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.example;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebListener;

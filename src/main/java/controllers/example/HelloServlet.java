@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.example;
 
 import java.io.*;
 

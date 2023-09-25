@@ -21,7 +21,7 @@ public class ConnectionFilter implements Filter {
             try {
                 request.setAttribute("conn", conn);
                 chain.doFilter(request, response);
-               // conn.commit();
+                conn.commit();
             } catch (ServiceJdbcException e) {
                 conn.rollback();
                 ((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage()); e.printStackTrace();
@@ -31,6 +31,5 @@ public class ConnectionFilter implements Filter {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.student;
 
 import domain.models.Student;
 import jakarta.servlet.ServletException;

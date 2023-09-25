@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.subject;
 
 import domain.models.Subject;
 import domain.models.Teacher;
@@ -8,22 +8,20 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import reposistories.impl.SubjectRepositoryLogicimpl;
+import repository.impl.StudentRepositoryimpl;
+import repository.impl.SubjectRepositoryimpl;
 import services.SubjectService;
+import services.impl.StudentServiceimpl;
 import services.impl.SubjectServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 
 @WebServlet(name = "subjectController", value = "/subject-form")
 public class SubjectController extends HttpServlet {
-    private SubjectRepositoryLogicimpl subjectRepository;
+    private SubjectRepositoryimpl subjectRepository;
     private SubjectService service;
-
-    public SubjectController() {
-        subjectRepository = new SubjectRepositoryLogicimpl();
-        service = new SubjectServiceimpl(subjectRepository);
-    }
-
     private String message;
 
     public void init() {
@@ -32,7 +30,9 @@ public class SubjectController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-
+        Connection conn = (Connection) request.getAttribute("conn");
+        subjectRepository = new SubjectRepositoryimpl(conn);
+        service = new SubjectServiceimpl(conn);
         // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -41,9 +41,12 @@ public class SubjectController extends HttpServlet {
         out.println("</body></html>");
     }
 
-    @Override
+    /*@Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
+        Connection conn = (Connection) req.getAttribute("conn");
+        subjectRepository = new SubjectRepositoryimpl(conn);
+        service = new SubjectServiceimpl(conn);
 
         String name = req.getParameter("name");
         Subject subject = new Subject(4L, name, new Teacher(5L,"Aja", "Aja@mail.com"));
@@ -67,7 +70,7 @@ public class SubjectController extends HttpServlet {
             out.println("    </body>");
             out.println("</html>");
         }
-    }
+    }*/
 
     public void destroy() {
     }

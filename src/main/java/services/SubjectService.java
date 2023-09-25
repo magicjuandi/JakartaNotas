@@ -1,15 +1,16 @@
 package services;
 
 import domain.models.Subject;
+import mapping.dtos.SubjectDto;
 
 import java.util.List;
 
 public interface SubjectService {
-    List<Subject> list();
+    List<SubjectDto> list();
 
-    Subject byId(Long id);
+    SubjectDto byId(Long id);
 
-    void save(Subject t);
+    void save(SubjectDto t);
 
     void delete(Long id);
 }

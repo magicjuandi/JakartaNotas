@@ -10,10 +10,13 @@ public class ConexionDB {
     private static String password = "";
     private static Connection connection;
     public static Connection getInstance() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        if(connection == null){
-            connection = DriverManager.getConnection(url,user,password);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(url, user, password);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println("couldn't connect!");
+            throw new RuntimeException(ex);
         }
-        return connection;
     }
 }

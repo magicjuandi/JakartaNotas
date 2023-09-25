@@ -1,4 +1,4 @@
-package conntrollers;
+package controllers.login;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

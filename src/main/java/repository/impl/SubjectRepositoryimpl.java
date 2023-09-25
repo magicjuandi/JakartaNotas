@@ -2,6 +2,9 @@ package repository.impl;
 
 import domain.models.Subject;
 import domain.models.Teacher;
+import mapping.dtos.SubjectDto;
+import mapping.mappers.SubjectMapper;
+import repository.Repository;
 import repository.SubjectRepository;
 import singledomain.ConexionDB;
 
@@ -9,11 +12,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubjectRepositoryimpl implements SubjectRepository {
-    private Connection getConnection() throws SQLException, ClassNotFoundException {
-        return ConexionDB.getInstance();
+public class SubjectRepositoryimpl implements Repository<SubjectDto> {
+    private Connection conn;
+    public SubjectRepositoryimpl(Connection conn) {
+        this.conn = conn;
     }
-    private Subject createSubject(ResultSet resultSet)throws SQLException{
+    private SubjectDto createSubject(ResultSet resultSet)throws SQLException{
         Subject subject = new Subject();
         subject.setId(resultSet.getLong("id"));
         subject.setName(resultSet.getString("subject"));
@@ -23,28 +27,26 @@ public class SubjectRepositoryimpl implements SubjectRepository {
         teacher.setEmail(resultSet.getString("email"));
 
         subject.setTeacher(teacher);
-        return subject;
+        return SubjectMapper.mapFrom(subject);
     }
-    public List<Subject> list(){
-        List<Subject> subjectList = new ArrayList<Subject>();
-        try(Statement stat = getConnection().createStatement();
+    public List<SubjectDto> list(){
+        List<SubjectDto> subjectList = new ArrayList<SubjectDto>();
+        try(Statement stat = conn.createStatement();
             ResultSet rs = stat.executeQuery("SELECT sub.id, sub.name AS subject, sub.teacherid, tea.name," +
                     " tea.email FROM subject AS sub, teacher AS tea WHERE sub.teacherid = tea.id;")){
             while(rs.next()){
-                Subject subject = createSubject(rs);
+                SubjectDto subject = createSubject(rs);
                 subjectList.add(subject);
             }
 
         } catch (SQLException e){
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
         return subjectList;
     }
-    public Subject byId(Long id){
-        Subject subject = null;
-        try(PreparedStatement preparedStatement = getConnection()
+    public SubjectDto byId(Long id){
+        SubjectDto subject = null;
+        try(PreparedStatement preparedStatement = conn
                 .prepareStatement("SELECT sub.id, sub.name AS subject, sub.teacherid, tea.name," +
                         " tea.email FROM subject AS sub, teacher AS tea WHERE sub.teacherid = tea.id " +
                         "AND sub.id = ?;")){
@@ -56,30 +58,27 @@ public class SubjectRepositoryimpl implements SubjectRepository {
             resultSet.close();
         }catch(SQLException e){
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
         return subject;
     }
-    public void delete(int id){
-        try(PreparedStatement preparedStatement = getConnection()
+    public void delete(Long id){
+        try(PreparedStatement preparedStatement = conn
                 .prepareStatement("DELETE FROM subject WHERE id =?")) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException throwables){
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
-    public void save(Subject subject){
+    public void save(SubjectDto subjectDto){
         String sql;
+        Subject subject = SubjectMapper.mapFrom(subjectDto);
         if(subject.getId() != null && subject.getId()>0){
             sql = "UPDATE subject SET name=?, teacherid=? WHERE id=?";
         }else{
             sql = "INSERT INTO subject (name, teacherid) VALUES (?, ?)";
         }
-        try(PreparedStatement stmt = getConnection().prepareStatement(sql)){
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setString(1, subject.getName());
             stmt.setLong(2, subject.getTeacher().getId());
             if(subject.getId() != null && subject.getId()>0){
@@ -88,8 +87,6 @@ public class SubjectRepositoryimpl implements SubjectRepository {
             stmt.executeUpdate();
         }catch (SQLException throwables){
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 }
