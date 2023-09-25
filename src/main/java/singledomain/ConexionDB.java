@@ -8,7 +8,6 @@ public class ConexionDB {
     private static String url = "jdbc:mysql://localhost:3306/proyectonotas";
     private static String user = "root";
     private static String password = "";
-    private static Connection connection;
     public static Connection getInstance() throws SQLException, ClassNotFoundException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

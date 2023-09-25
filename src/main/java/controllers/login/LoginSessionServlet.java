@@ -24,7 +24,7 @@ public class LoginSessionServlet  extends HttpServlet {
         if (USERNAME.equals(username) && PASSWORD.equals(password)) {
             HttpSession session = req.getSession();
             session.setAttribute("username", username);
-            resp.sendRedirect(req.getContextPath() + "/login.html");
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
         } else {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Lo sentimos no esta autorizado para ingresar a esta página!");
         }
