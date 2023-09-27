@@ -1,7 +1,11 @@
 package controllers.student;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.ArrayBuilders;
+import com.sun.jdi.LongValue;
 import domain.models.Student;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,17 +49,22 @@ public class StudentController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
         Connection conn = (Connection) req.getAttribute("conn");
+        ServletInputStream JsonStream = req.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        StudentDto student = mapper.readValue(JsonStream, StudentDto.class);
         studentRepository = new StudentRepositoryimpl(conn);
         service = new StudentServiceimpl(conn);
-        String name = req.getParameter("name");
+
+        /*String name = req.getParameter("name");
         String email = req.getParameter("email");
         String semester = req.getParameter("semester");
         Student student = Student.builder()
                 .name(name)
                 .email(email)
                 .semester(semester).build();
-        StudentDto studentDto = StudentMapper.mapFrom(student);
-        service.save(studentDto);
+        StudentDto studentDto = StudentMapper.mapFrom(student);*/
+
+        service.save(student);
         System.out.println(service.list());
 
         try (PrintWriter out = resp.getWriter()) {
@@ -70,13 +79,81 @@ public class StudentController extends HttpServlet {
             out.println("        <h1>Resultado form!</h1>");
 
             out.println("        <ul>");
-            out.println("            <li>Name: " + name + "</li>");
-            out.println("            <li>Email: " + email + "</li>");
-            out.println("            <li>Semester: " + semester + "</li>");
+            out.println("            <li>Name: " + student.name() + "</li>");
+            out.println("            <li>Email: " + student.email() + "</li>");
+            out.println("            <li>Semester: " + student.semester() + "</li>");
             out.println("        </ul>");
             out.println("    </body>");
             out.println("</html>");
         }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        Connection conn = (Connection) req.getAttribute("conn");
+
+        studentRepository = new StudentRepositoryimpl(conn);
+        service = new StudentServiceimpl(conn);
+
+        ServletInputStream JsonStream = req.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        StudentDto student = mapper.readValue(JsonStream, StudentDto.class);
+
+        StudentService service = new StudentServiceimpl(conn);
+
+
+            /* Long id = Long.valueOf(req.getParameter("id"));
+            String name = req.getParameter("name");
+            String email = req.getParameter("email");
+            String semester = req.getParameter("semester");
+
+
+               Student student = Student.builder()
+                        .id(id)
+                        .name(name)
+                        .email(email)
+                        .semester(semester)
+                        .build();
+
+                StudentDto studentDto = StudentMapper.mapFrom(student)*/;
+        service.save(student);
+        try (PrintWriter out = resp.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("    <head>");
+            out.println("        <meta charset=\"UTF-8\">");
+            out.println("        <title>Resultado form</title>");
+            out.println("    </head>");
+            out.println("    <body>");
+            out.println("        <h1>Resultado form!</h1>");
+
+            out.println("        <ul>");
+            out.println("            <li>Id: " + student.id() + "</li>");
+            out.println("            <li>Name: " + student.name() + "</li>");
+            out.println("            <li>Email: " + student.email() + "</li>");
+            out.println("            <li>Semester: " + student.semester() + "</li>");
+            out.println("        </ul>");
+            out.println("    </body>");
+            out.println("</html>");
+        }
+
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        Connection conn = (Connection) req.getAttribute("conn");
+        ServletInputStream JsonStream = req.getInputStream();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        StudentService service = new StudentServiceimpl(conn);
+
+        StudentDto studentDto = mapper.readValue(JsonStream, StudentDto.class);
+        Long id = studentDto.id();
+
+        service.delete(id);
     }
 
     public void destroy() {
