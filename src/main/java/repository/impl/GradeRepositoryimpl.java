@@ -4,18 +4,22 @@ import domain.models.Grade;
 import domain.models.Student;
 import domain.models.Subject;
 import domain.models.Teacher;
+import mapping.dtos.GradeDto;
+import mapping.mappers.GradeMapper;
 import repository.GradeRepository;
+import repository.Repository;
 import singledomain.ConexionDB;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GradeRepositoryimpl implements GradeRepository {
-    private Connection getConnection() throws SQLException, ClassNotFoundException {
-        return ConexionDB.getInstance();
+public class GradeRepositoryimpl implements Repository<GradeDto> {
+    private Connection conn;
+    public GradeRepositoryimpl(Connection conn) {
+        this.conn = conn;
     }
-    public Grade createGrade(ResultSet resultSet)throws SQLException{
+    public GradeDto createGrade(ResultSet resultSet)throws SQLException{
         Grade grade = new Grade();
 
         grade.setId(resultSet.getLong("id"));
@@ -37,31 +41,29 @@ public class GradeRepositoryimpl implements GradeRepository {
         grade.setGrade(resultSet.getDouble("grade"));
 
 
-        return grade;
+        return GradeMapper.mapFrom(grade);
     }
 
-    public List<Grade> list(){
-        List<Grade> gradeList = new ArrayList<Grade>();
-        try(Statement stat = getConnection().createStatement();
+    public List<GradeDto> list(){
+        List<GradeDto> gradeList = new ArrayList<GradeDto>();
+        try(Statement stat = conn.createStatement();
             ResultSet rs = stat.executeQuery("SELECT gra.id, gra.studentid, stu.name, stu.email, stu.semester, " +
                     "gra.subjectid, sub.name AS subject, sub.teacherid, tea.name AS teachername, tea.email AS " +
                     "teachermail, gra.grade FROM grade AS gra, student AS stu, subject AS sub, teacher AS tea WHERE " +
                     "gra.studentid = stu.id AND gra.subjectid = sub.id AND sub.teacherid = tea.id;")){
             while(rs.next()){
-                Grade grade = createGrade(rs);
+                GradeDto grade = createGrade(rs);
                 gradeList.add(grade);
             }
 
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
         return gradeList;
     }
-    public Grade byId(Long id){
-        Grade grade = null;
-        try(PreparedStatement preparedStatement = getConnection()
+    public GradeDto byId(Long id){
+        GradeDto grade = null;
+        try(PreparedStatement preparedStatement = conn
                 .prepareStatement("SELECT gra.id, gra.studentid, stu.name, stu.email, stu.semester, " +
                         "gra.subjectid, sub.name AS subject, sub.teacherid, tea.name AS teachername, tea.email AS " +
                         "teachermail, gra.grade FROM grade AS gra, student AS stu, subject AS sub, teacher AS " +
@@ -75,30 +77,27 @@ public class GradeRepositoryimpl implements GradeRepository {
             resultSet.close();
         }catch(SQLException e){
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
         return grade;
     }
-    public void delete(int id){
-        try(PreparedStatement preparedStatement = getConnection()
+    public void delete(Long id){
+        try(PreparedStatement preparedStatement = conn
                 .prepareStatement("DELETE FROM grade WHERE id =?")) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException throwables){
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
-    public void save(Grade grade){
+    public void save(GradeDto gradeDto){
         String sql;
+        Grade grade = GradeMapper.mapFrom(gradeDto);
         if(grade.getId() != null && grade.getId()>0){
             sql = "UPDATE grade SET studentid=?, subjectid=?, grade=? WHERE id=?";
         }else{
             sql = "INSERT INTO grade (studentid, subjectid, grade) VALUES (?,?,?);";
         }
-        try(PreparedStatement stmt = getConnection().prepareStatement(sql)){
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setLong(1, grade.getStudent().getId());
             stmt.setLong(2, grade.getSubject().getId());
             stmt.setDouble(3, grade.getGrade());
@@ -108,8 +107,6 @@ public class GradeRepositoryimpl implements GradeRepository {
             stmt.executeUpdate();
         }catch (SQLException throwables){
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 }

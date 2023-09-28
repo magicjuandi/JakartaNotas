@@ -12,5 +12,5 @@ public class Grade {
     private Long id;
     private Student student;
     private Subject subject;
-    private double grade;
+    private Double grade;
 }
