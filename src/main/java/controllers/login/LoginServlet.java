@@ -6,11 +6,22 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mapping.dtos.StudentDto;
+import mapping.dtos.SubjectDto;
+import mapping.dtos.TeacherDto;
 import services.LoginService;
+import services.StudentService;
+import services.SubjectService;
+import services.TeacherService;
 import services.impl.LoginServiceimpl;
+import services.impl.StudentServiceimpl;
+import services.impl.SubjectServiceimpl;
+import services.impl.TeacherServiceimpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.List;
 import java.util.Optional;
 
 @WebServlet("/login")
@@ -26,6 +37,16 @@ public class LoginServlet extends HttpServlet {
         if (USERNAME.equals(username) && PASSWORD.equals(password)) {
             Cookie usernameCookie = new Cookie("username", username);
             resp.addCookie(usernameCookie);
+            Connection conn = (Connection) req.getAttribute("conn");
+            TeacherService tService = new TeacherServiceimpl(conn);
+            List<TeacherDto> teacherDtoList = tService.list();
+            getServletContext().setAttribute("teacherDtoList", teacherDtoList);
+            SubjectService subService = new SubjectServiceimpl(conn);
+            List<SubjectDto> subjectDtoList = subService.list();
+            getServletContext().setAttribute("subjectDtoList", subjectDtoList);
+            StudentService stuService = new StudentServiceimpl(conn);
+            List<StudentDto> studentDtoList = stuService.list();
+            getServletContext().setAttribute("studentDtoList", studentDtoList);
             try (PrintWriter out = resp.getWriter()) {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
