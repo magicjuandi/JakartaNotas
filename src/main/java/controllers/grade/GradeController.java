@@ -2,6 +2,8 @@ package controllers.grade;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.Grade;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +16,7 @@ import mapping.dtos.SubjectDto;
 import mapping.mappers.GradeMapper;
 import mapping.mappers.StudentMapper;
 import mapping.mappers.SubjectMapper;
+import repository.Repository;
 import repository.impl.GradeRepositoryimpl;
 import repository.impl.SubjectRepositoryimpl;
 import services.GradeService;
@@ -33,19 +36,25 @@ import java.util.Map;
 
 @WebServlet(name = "gradeController", value = "/grade-form")
 public class GradeController extends HttpServlet {
-    private GradeRepositoryimpl gradeRepository;
+    @Inject
+    @Named("gradeRep")
+    private Repository<GradeDto> gradeRepository;
+    @Inject
+
     private GradeService service;
+
     private String message;
+    @Inject
+
     private SubjectService subjectService;
+    @Inject
+
     private StudentService studentService;
     public void init(){
         message = "Hello World!";
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        Connection conn = (Connection) request.getAttribute("conn");
-        gradeRepository = new GradeRepositoryimpl(conn);
-        service = new GradeServiceimpl(conn);
         // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -56,13 +65,6 @@ public class GradeController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        gradeRepository = new GradeRepositoryimpl(conn);
-        service = new GradeServiceimpl(conn);
-        subjectService = new SubjectServiceimpl(conn);
-        studentService = new StudentServiceimpl(conn);
-        StudentServiceimpl studentService = new StudentServiceimpl(conn);
-        SubjectServiceimpl subjectService = new SubjectServiceimpl(conn);
         /*ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         GradeDto gradeDto = mapper.readValue(JsonStream, GradeDto.class);*/
@@ -119,11 +121,6 @@ public class GradeController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        gradeRepository = new GradeRepositoryimpl(conn);
-        service = new GradeServiceimpl(conn);
-        StudentServiceimpl studentService = new StudentServiceimpl(conn);
-        SubjectServiceimpl subjectService = new SubjectServiceimpl(conn);
         ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         GradeDto gradeDto = mapper.readValue(JsonStream, GradeDto.class);
@@ -173,9 +170,7 @@ public class GradeController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
         ServletInputStream JsonStream = req.getInputStream();
-        service = new GradeServiceimpl(conn);
         ObjectMapper mapper = new ObjectMapper();
         GradeDto gradeDto = mapper.readValue(JsonStream, GradeDto.class);
         Long id = gradeDto.id();

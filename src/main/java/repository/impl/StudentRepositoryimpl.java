@@ -1,8 +1,12 @@
 package repository.impl;
 
+import annotations.MysqlConn;
 import domain.models.Student;
 import exceptions.ServiceJdbcException;
 import exceptions.UniversityException;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
 import repository.Repository;
@@ -13,11 +17,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestScoped
+@Named("studentRep")
 public class StudentRepositoryimpl implements Repository<StudentDto> {
+    @Inject
+    @MysqlConn
     private Connection conn;
-    public StudentRepositoryimpl(Connection conn) {
-        this.conn = conn;
-    }
 
     private StudentDto createStudent(ResultSet resultSet)throws SQLException{
         Student student = new Student();

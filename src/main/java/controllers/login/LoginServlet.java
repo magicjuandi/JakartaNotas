@@ -1,5 +1,7 @@
 package controllers.login;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -28,6 +30,15 @@ import java.util.Optional;
 public class LoginServlet extends HttpServlet {
     final static String USERNAME = "admin";
     final static String PASSWORD = "12345";
+    @Inject
+    @Named("login")
+    private LoginService auth;
+    @Inject
+    TeacherService tService;
+    @Inject
+    SubjectService subService;
+    @Inject
+    StudentService stuService;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
@@ -38,13 +49,10 @@ public class LoginServlet extends HttpServlet {
             Cookie usernameCookie = new Cookie("username", username);
             resp.addCookie(usernameCookie);
             Connection conn = (Connection) req.getAttribute("conn");
-            TeacherService tService = new TeacherServiceimpl(conn);
             List<TeacherDto> teacherDtoList = tService.list();
             getServletContext().setAttribute("teacherDtoList", teacherDtoList);
-            SubjectService subService = new SubjectServiceimpl(conn);
             List<SubjectDto> subjectDtoList = subService.list();
             getServletContext().setAttribute("subjectDtoList", subjectDtoList);
-            StudentService stuService = new StudentServiceimpl(conn);
             List<StudentDto> studentDtoList = stuService.list();
             getServletContext().setAttribute("studentDtoList", studentDtoList);
             try (PrintWriter out = resp.getWriter()) {
@@ -68,7 +76,6 @@ public class LoginServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
             ServletException, IOException {
-        LoginService auth = new LoginServiceimpl();
         Optional<String> cookieOptional = auth.getUsername(req);
         if (cookieOptional.isPresent()) {
             resp.setContentType("text/html;charset=UTF-8");

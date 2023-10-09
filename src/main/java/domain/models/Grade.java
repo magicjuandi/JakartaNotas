@@ -1,6 +1,9 @@
 package domain.models;
 
+import jakarta.enterprise.context.SessionScoped;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -8,7 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Grade {
+@SessionScoped
+public class Grade implements Serializable {
     private Long id;
     private Student student;
     private Subject subject;

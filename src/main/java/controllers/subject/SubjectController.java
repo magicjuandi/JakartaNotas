@@ -3,6 +3,8 @@ package controllers.subject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.Subject;
 import domain.models.Teacher;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +17,7 @@ import mapping.dtos.TeacherDto;
 import mapping.mappers.SubjectMapper;
 import mapping.mappers.TeacherMapper;
 import reposistories.impl.SubjectRepositoryLogicimpl;
+import repository.Repository;
 import repository.impl.StudentRepositoryimpl;
 import repository.impl.SubjectRepositoryimpl;
 import services.SubjectService;
@@ -32,10 +35,13 @@ import java.util.Map;
 
 @WebServlet(name = "subjectController", value = "/subject-form")
 public class SubjectController extends HttpServlet {
-    private SubjectRepositoryimpl subjectRepository;
+    @Inject
+    @Named("subjectRep")
+    private Repository<SubjectDto> subjectRepository;
+    @Inject
     private SubjectService service;
+    @Inject
     private TeacherService teacherService;
-    private Map<Long, String> teachers;
     private String message;
 
     public void init() {
@@ -44,9 +50,6 @@ public class SubjectController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        Connection conn = (Connection) request.getAttribute("conn");
-        subjectRepository = new SubjectRepositoryimpl(conn);
-        service = new SubjectServiceimpl(conn);
         // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -58,10 +61,6 @@ public class SubjectController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        subjectRepository = new SubjectRepositoryimpl(conn);
-        service = new SubjectServiceimpl(conn);
-        teacherService = new TeacherServiceimpl(conn);
 
         /*teachers = getTeachersMap();
         String teacher= req.getParameter("teacher");
@@ -171,10 +170,6 @@ public class SubjectController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        subjectRepository = new SubjectRepositoryimpl(conn);
-        service = new SubjectServiceimpl(conn);
-        TeacherServiceimpl teacherService = new TeacherServiceimpl(conn);
         ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         SubjectDto subjectDto = mapper.readValue(JsonStream, SubjectDto.class);
@@ -216,9 +211,8 @@ public class SubjectController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
         ServletInputStream JsonStream = req.getInputStream();
-        service = new SubjectServiceimpl(conn);
+
         ObjectMapper mapper = new ObjectMapper();
         SubjectDto subjectDto = mapper.readValue(JsonStream, SubjectDto.class);
         Long id = subjectDto.id();

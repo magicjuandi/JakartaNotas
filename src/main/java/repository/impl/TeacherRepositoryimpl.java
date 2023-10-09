@@ -1,7 +1,11 @@
 package repository.impl;
 
+import annotations.MysqlConn;
 import domain.models.Teacher;
 import exceptions.ServiceJdbcException;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.TeacherDto;
 import mapping.mappers.TeacherMapper;
 import repository.Repository;
@@ -11,13 +15,12 @@ import singledomain.ConexionDB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@RequestScoped
+@Named("teacherRep")
 public class TeacherRepositoryimpl implements Repository<TeacherDto> {
-
+    @Inject
+    @MysqlConn
     private Connection conn;
-    public TeacherRepositoryimpl(Connection conn) {
-        this.conn = conn;
-    }
     public TeacherDto createTeacher(ResultSet resultSet)throws SQLException{
         Teacher teacher = new Teacher();
         teacher.setId(resultSet.getLong("id"));

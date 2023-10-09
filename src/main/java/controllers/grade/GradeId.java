@@ -1,6 +1,8 @@
 package controllers.grade;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mapping.dtos.GradeDto;
 import mapping.dtos.StudentDto;
+import repository.Repository;
 import repository.impl.GradeRepositoryimpl;
 import repository.impl.StudentRepositoryimpl;
 import services.GradeService;
@@ -21,15 +24,16 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 @WebServlet(name= "gradeId", value="/grade-formId")
 public class GradeId extends HttpServlet {
-    private GradeRepositoryimpl gradeRepository;
+    @Inject
+    @Named("gradeRep")
+    private Repository<GradeDto> gradeRepository;
+    @Inject
+
     private GradeService service;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        gradeRepository = new GradeRepositoryimpl(conn);
-        service = new GradeServiceimpl(conn);
         ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         GradeDto gradeDto = mapper.readValue(JsonStream, GradeDto.class);

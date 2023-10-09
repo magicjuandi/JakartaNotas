@@ -1,7 +1,11 @@
 package repository.impl;
 
+import annotations.MysqlConn;
 import domain.models.Subject;
 import domain.models.Teacher;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.SubjectDto;
 import mapping.mappers.SubjectMapper;
 import repository.Repository;
@@ -11,12 +15,13 @@ import singledomain.ConexionDB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@RequestScoped
+@Named("subjectRep")
 public class SubjectRepositoryimpl implements Repository<SubjectDto> {
+    @Inject
+    @MysqlConn
     private Connection conn;
-    public SubjectRepositoryimpl(Connection conn) {
-        this.conn = conn;
-    }
+
     private SubjectDto createSubject(ResultSet resultSet)throws SQLException{
         Subject subject = new Subject();
         subject.setId(resultSet.getLong("id"));

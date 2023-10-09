@@ -1,6 +1,9 @@
 package services.impl;
 
 import domain.models.Subject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.SubjectDto;
 import reposistories.impl.SubjectRepositoryLogicimpl;
 import repository.Repository;
@@ -9,12 +12,12 @@ import services.SubjectService;
 
 import java.sql.Connection;
 import java.util.List;
-
+@ApplicationScoped
 public class SubjectServiceimpl implements SubjectService {
-    private final Repository<SubjectDto> subjectRepository;
-    public SubjectServiceimpl(Connection connection){
-        this.subjectRepository = new SubjectRepositoryimpl(connection);
-    }
+    @Inject
+    @Named("subjectRep")
+    private Repository<SubjectDto> subjectRepository;
+
     @Override
     public List<SubjectDto> list() {
         return subjectRepository.list();

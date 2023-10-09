@@ -2,6 +2,8 @@ package controllers.teacher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.Teacher;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +14,7 @@ import mapping.dtos.StudentDto;
 import mapping.dtos.TeacherDto;
 import mapping.mappers.TeacherMapper;
 import reposistories.impl.TeacherRepositoryLogicimpl;
+import repository.Repository;
 import repository.impl.StudentRepositoryimpl;
 import repository.impl.TeacherRepositoryimpl;
 import services.TeacherService;
@@ -26,8 +29,11 @@ import java.util.Map;
 
 @WebServlet(name = "teacherController", value = "/teacher-form")
 public class TeacherController extends HttpServlet {
-    private TeacherRepositoryimpl teacherRepository;
-    private TeacherService service;
+    @Inject
+    @Named("teacherRep")
+    Repository<TeacherDto> teacherRepository;
+    @Inject
+    TeacherService service;
     private String message;
 
     public void init() {
@@ -36,9 +42,6 @@ public class TeacherController extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        Connection conn = (Connection) request.getAttribute("conn");
-        teacherRepository = new TeacherRepositoryimpl(conn);
-        service = new TeacherServiceimpl(conn);
 
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -50,9 +53,6 @@ public class TeacherController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        teacherRepository = new TeacherRepositoryimpl(conn);
-        service = new TeacherServiceimpl(conn);
         /*ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         TeacherDto teacher = mapper.readValue(JsonStream, TeacherDto.class);*/
@@ -95,9 +95,6 @@ public class TeacherController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
-        teacherRepository = new TeacherRepositoryimpl(conn);
-        service = new TeacherServiceimpl(conn);
         ServletInputStream JsonStream = req.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         TeacherDto teacher = mapper.readValue(JsonStream, TeacherDto.class);
@@ -134,11 +131,10 @@ public class TeacherController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        Connection conn = (Connection) req.getAttribute("conn");
         ServletInputStream JsonStream = req.getInputStream();
 
         ObjectMapper mapper = new ObjectMapper();
-        service = new TeacherServiceimpl(conn);
+
         TeacherDto teacherDto = mapper.readValue(JsonStream, TeacherDto.class);
         Long id = teacherDto.id();
         service.delete(id);

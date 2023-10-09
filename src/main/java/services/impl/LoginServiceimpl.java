@@ -1,12 +1,15 @@
 package services.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import services.LoginService;
 
 import java.util.Arrays;
 import java.util.Optional;
-
+@ApplicationScoped
+@Named("login")
 public class LoginServiceimpl implements LoginService {
 
     @Override

@@ -2,6 +2,8 @@ package controllers.student;
 
 import domain.models.Student;
 import exceptions.UniversityException;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mapping.dtos.StudentDto;
 import mapping.mappers.StudentMapper;
+import repository.Repository;
 import repository.impl.StudentRepositoryimpl;
 import services.StudentService;
 import services.impl.StudentServiceimpl;
@@ -19,14 +22,14 @@ import java.sql.Connection;
 
 @WebServlet("/studentId")
 public class StudentIdServlet extends HttpServlet {
-    private StudentRepositoryimpl repository;
+    @Inject
+    @Named("studentRep")
+    private Repository<StudentDto> repository;
+    @Inject
+
     private StudentService service;
     private StudentMapper mapper;
     private Connection conn;
-    public StudentIdServlet(){
-        repository = new StudentRepositoryimpl(conn);
-        service = new StudentServiceimpl(conn);
-    }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
             IOException {

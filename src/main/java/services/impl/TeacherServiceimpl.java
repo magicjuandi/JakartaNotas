@@ -1,6 +1,8 @@
 package services.impl;
 
 import domain.models.Teacher;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.TeacherDto;
 import reposistories.impl.TeacherRepositoryLogicimpl;
 import repository.Repository;
@@ -11,11 +13,10 @@ import java.sql.Connection;
 import java.util.List;
 
 public class TeacherServiceimpl implements TeacherService {
-
+    @Inject
+    @Named("teacherRep")
     private Repository<TeacherDto> teacherRepository;
-    public TeacherServiceimpl(Connection connection) {
-        this.teacherRepository = new TeacherRepositoryimpl(connection);
-    }
+
     @Override
     public List<TeacherDto> list() {
         return teacherRepository.list();

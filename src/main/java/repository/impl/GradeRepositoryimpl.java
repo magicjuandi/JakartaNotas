@@ -1,9 +1,13 @@
 package repository.impl;
 
+import annotations.MysqlConn;
 import domain.models.Grade;
 import domain.models.Student;
 import domain.models.Subject;
 import domain.models.Teacher;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.GradeDto;
 import mapping.mappers.GradeMapper;
 import repository.GradeRepository;
@@ -13,12 +17,12 @@ import singledomain.ConexionDB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@RequestScoped
+@Named("gradeRep")
 public class GradeRepositoryimpl implements Repository<GradeDto> {
+    @Inject
+    @MysqlConn
     private Connection conn;
-    public GradeRepositoryimpl(Connection conn) {
-        this.conn = conn;
-    }
     public GradeDto createGrade(ResultSet resultSet)throws SQLException{
         Grade grade = new Grade();
 

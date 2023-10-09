@@ -2,6 +2,9 @@ package services.impl;
 
 
 import exceptions.ServiceJdbcException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.StudentDto;
 import repository.Repository;
 import repository.impl.StudentRepositoryimpl;
@@ -10,13 +13,11 @@ import services.StudentService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-
+@ApplicationScoped
 public class StudentServiceimpl implements StudentService {
+    @Inject
+    @Named("studentRep")
     private Repository<StudentDto> studentRepository;
-
-    public StudentServiceimpl(Connection connection) {
-        this.studentRepository = new StudentRepositoryimpl(connection);
-    }
 
     @Override
     public List<StudentDto> list() {

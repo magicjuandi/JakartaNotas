@@ -1,5 +1,8 @@
 package services.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import mapping.dtos.GradeDto;
 import repository.Repository;
 import repository.impl.GradeRepositoryimpl;
@@ -7,13 +10,12 @@ import services.GradeService;
 
 import java.sql.Connection;
 import java.util.List;
-
+@ApplicationScoped
 public class GradeServiceimpl implements GradeService {
-    private final Repository<GradeDto> gradeRepository;
+    @Inject
+    @Named("gradeRep")
+    private Repository<GradeDto> gradeRepository;
 
-    public GradeServiceimpl(Connection connection) {
-        this.gradeRepository = new GradeRepositoryimpl(connection);
-    }
 
     @Override
     public List<GradeDto> list() {

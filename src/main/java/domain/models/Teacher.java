@@ -1,6 +1,9 @@
 package domain.models;
 
+import jakarta.enterprise.context.SessionScoped;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -8,7 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Teacher {
+@SessionScoped
+public class Teacher implements Serializable {
     private Long id;
     private String name;
     private String email;
