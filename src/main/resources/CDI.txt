@@ -1,0 +1,25 @@
+pool.setInitialSize(3);
+Este método configura el tamaño inicial del grupo de conexiones a 3.
+pool.setMinIdle(3);
+Se establecen 3 conexiones inactivas que el pool de conexiones debe mantener siempre.
+pool.setMaxIdle(8);
+El pool de conexiones establece un maximo de 8 conexiones inactivas al mismo tiempo.
+@Dependent
+sta anotación se usa para espicificar que un componente tiene un ciclo de vida
+dependiente del componente que lo inyecta.
+@RequestScoped
+Esta anotación se utiliza para especificar que un componente tiene un alcance limitado a la solicitud HTTP actual.
+@SessionScoped
+Esta anotación se utiliza para especificar que un componente tiene un alcance largo para multiples usos en una conexion.
+@ConversationScoped
+Está diseñado para representar conversaciones cortas dentro de una sesión.
+@ApplicationScoped
+Esta anotación se utiliza para especificar que un componente tiene un alcance de aplicación.
+@Retention
+Es una anotación que se usa para saber cómo se tendran las anotaciones personalizadas en el tiempo de uso.
+@Target
+Se usa para saber que elementos se le pueden aplicar las anotaciones personalizadas.
+@Qualifier
+Para diferenciar entre las diferentes implementaciones de un mismo tipo de bean.
+
+
